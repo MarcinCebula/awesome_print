@@ -20,7 +20,9 @@ module AwesomePrint
           cast = :mongoid_class
         elsif object.class.ancestors.include?(::Mongoid::Document)
           cast = :mongoid_document
-        elsif (defined?(::BSON) && object.is_a?(::BSON::ObjectId)) || (defined?(::Moped) && defined?(::Moped::BSON) && object.is_a?(::Moped::BSON::ObjectId))
+        # If you're using the old Moped gem it contains the BSON module, so this will not throw any exceptions, if you are using the new gem then ::Moped::BSON:: doesn't exist and you really don't care what happenes at object.is_a?(::Moped::BSON::ObjectId), but it sure as heck should not throw an exception.
+
+        elsif (defined?(::BSON) && object.is_a?(::BSON::ObjectId)) || (defined?(::Moped) && defined?(::Moped::BSON) && object.is_a?(::Moped::BSON::ObjectId) rescue false)
           cast = :mongoid_bson_id
         end
       end
